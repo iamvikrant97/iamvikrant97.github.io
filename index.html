@@ -262,6 +262,32 @@ footer .made{ font-size:12px; }
 .reel:hover .rplay{ transform:translate(-50%,-50%) scale(1.08); background:var(--amber-soft); }
 .reel.playing .reel-poster{ display:none; }
 
+/* ---------------- CREDENTIALS MODAL ---------------- */
+.cred-cta{ display:flex; justify-content:center; margin-top:46px; }
+#credBtn{ background:rgba(233,162,59,.12); border:1.5px solid rgba(233,162,59,.55); color:var(--cream); }
+#credBtn:hover{ background:rgba(233,162,59,.22); border-color:var(--amber); }
+#credBtn svg{ color:var(--amber); }
+.modal{ position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; padding:24px; }
+.modal.open{ display:flex; }
+.modal-backdrop{ position:absolute; inset:0; background:rgba(12,9,8,.74); backdrop-filter:blur(4px); }
+.modal-panel{ position:relative; z-index:1; width:100%; max-width:640px; max-height:85vh; overflow-y:auto;
+  background:var(--bg2); border:1px solid var(--line); border-radius:20px; padding:34px 32px 30px;
+  box-shadow:0 30px 90px rgba(0,0,0,.55); animation:modalIn .35s cubic-bezier(.2,.75,.25,1); }
+@keyframes modalIn{ from{opacity:0; transform:translateY(16px) scale(.98);} to{opacity:1; transform:none;} }
+.modal-panel h3{ font-family:"Fraunces",serif; font-weight:600; font-size:26px; margin-bottom:5px; }
+.modal-panel .msub{ color:var(--muted); font-size:14px; margin-bottom:26px; }
+.modal-close{ position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--line); background:var(--bg3); color:var(--cream); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s; }
+.modal-close:hover{ border-color:var(--amber); }
+.cred-group{ margin-bottom:24px; }
+.cred-group h4{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--amber); font-weight:800; margin-bottom:10px; }
+.cred-item{ display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--line2); }
+.cred-item .l{ font-weight:600; font-size:15px; }
+.cred-item .l small{ display:block; color:var(--muted); font-weight:500; font-size:13px; margin-top:2px; }
+.cred-item .yr{ color:var(--muted); font-size:13px; white-space:nowrap; }
+.cred-item a.view{ font-size:13px; font-weight:700; color:var(--amber); white-space:nowrap; display:inline-flex; align-items:center; gap:6px; }
+.cred-item a.view:hover{ gap:9px; }
+
 /* responsive */
 @media (max-width:900px){
   .hero .wrap{ grid-template-columns:1fr; }
@@ -331,8 +357,8 @@ footer .made{ font-size:12px; }
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow"><span class="dash"></span>What I do</span>
-      <h2 class="serif">Two skills most people keep separate.</h2>
-      <p>I plan and run the paid media, and I can make the creative that goes in it. That means fewer hand-offs and ads that actually look the part.</p>
+      <h2 class="serif">What I actually do.</h2>
+      <p>I plan the strategy, run the paid media, and make the creative that goes in it — so the channels stay joined up and there are fewer hand-offs.</p>
     </div>
     <div class="do-grid">
       <div class="do-card lead reveal">
@@ -415,13 +441,12 @@ footer .made{ font-size:12px; }
       <p>Over 200 professional shoots across India: portrait, product, event and outdoor work, plus short-form video. This is the craft that goes into the marketing.</p>
     </div>
     <div class="lens-grid">
-      <!-- PHOTO 4 — replace each .ph below with your images. Labels are just guides; use whatever fits. -->
-      <div class="g tall"><div class="ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/></svg><span class="pl">Portrait</span></div></div>
-      <div class="g"><div class="ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/></svg><span class="pl">Product</span></div></div>
-      <div class="g"><div class="ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/></svg><span class="pl">Event</span></div></div>
-      <div class="g wide"><div class="ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/></svg><span class="pl">Travel / landscape (wide)</span></div></div>
-      <div class="g"><div class="ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/></svg><span class="pl">Food</span></div></div>
-      <div class="g wide"><div class="ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/></svg><span class="pl">Street / candid (wide)</span></div></div>
+      <div class="g tall"><img src="lens_portrait.jpg" alt="Portrait — Edinburgh" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="g wide"><img src="lens_travel.jpg" alt="Travel — mountain ridge" style="width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;"></div>
+      <div class="g"><img src="lens_food.jpg" alt="Food" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="g"><img src="lens_architecture.jpg" alt="Architecture — Himalayan monastery" style="width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;"></div>
+      <div class="g"><img src="lens_events.jpg" alt="Events" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="g"><img src="lens_cityscape.jpg" alt="Cityscape — London" style="width:100%;height:100%;object-fit:cover;object-position:center 55%;display:block;"></div>
     </div>
   </div>
 </section>
@@ -499,7 +524,7 @@ footer .made{ font-size:12px; }
           <h4>Education</h4>
           <div class="cred"><div class="l">MSc Digital Marketing <small>University of Huddersfield, UK</small></div><div class="r">Merit · 2024</div></div>
           <div class="cred"><div class="l">PG Diploma, Marketing Management <small>Welingkar Institute, Mumbai</small></div><div class="r">Distinction · 2021</div></div>
-          <div class="cred"><div class="l">BA Mass Media (Advertising) <small>Chandrabhan Sharma College, Mumbai</small></div><div class="r">2019</div></div>
+          <div class="cred"><div class="l">BA Mass Media (Advertising) <small>Chandrabhan Sharma College · University of Mumbai</small></div><div class="r">2018</div></div>
         </div>
         <div class="cred-block">
           <h4>Certifications</h4>
@@ -510,10 +535,42 @@ footer .made{ font-size:12px; }
         </div>
       </div>
     </div>
+    <div class="cred-cta reveal">
+      <button class="btn btn-ghost" id="credBtn" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M12 2l2.4 2.4L18 4l-.4 3.6L21 9l-1.8 3L21 15l-3.4 1.4L18 20l-3.6-.4L12 22l-2.4-2.4L6 20l.4-3.6L3 15l1.8-3L3 9l3.4-1.4L6 4l3.6.4z"/></svg>
+        View all credentials
+      </button>
+    </div>
   </div>
 </section>
 
-<!-- ============ CONTACT ============ -->
+<!-- Credentials modal -->
+<div class="modal" id="credModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Credentials">
+    <button class="modal-close" data-close aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h3>Credentials</h3>
+    <p class="msub">Degrees and certifications, in one place.</p>
+
+    <div class="cred-group">
+      <h4>Education</h4>
+      <div class="cred-item"><div class="l">MSc Digital Marketing <small>University of Huddersfield, UK · Merit · 2024</small></div><a class="view" href="MSc_Digital_Marketing_Huddersfield.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">PG Diploma, Marketing Management <small>Welingkar Institute, Mumbai · Distinction · 2021</small></div><a class="view" href="PG_Diploma_Welingkar.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">BA Mass Media (Advertising) <small>Chandrabhan Sharma College · University of Mumbai · 2018</small></div><a class="view" href="BA_Mass_Media_Mumbai.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    </div>
+
+    <div class="cred-group">
+      <h4>Certifications</h4>
+      <div class="cred-item"><div class="l">Google Ads Search <small>Google · 2026</small></div><a class="view" href="Google_Ads_Search_Certificate.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">Meta Blueprint · Digital Marketing path <small>Meta · 10 certificates · 2026</small></div><a class="view" href="Meta_Blueprint_Certificates.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">Hootsuite Platform Certification <small>Hootsuite · 2024</small></div><a class="view" href="Hootsuite_Platform_Certification.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">Basic Photography Course <small>Indian Photo Academy, Mumbai · 2012</small></div><a class="view" href="Photography_Certificate.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">GA4 &amp; HubSpot Content Marketing <small>Google · HubSpot</small></div><div class="yr">In progress</div></div>
+    </div>
+  </div>
+</div>
 <section class="contact" id="contact">
   <div class="wrap">
     <div class="reveal">
@@ -580,6 +637,17 @@ footer .made{ font-size:12px; }
       reel.appendChild(f);
     });
   });
+
+  // credentials modal
+  const credBtn = document.getElementById('credBtn');
+  const credModal = document.getElementById('credModal');
+  if (credBtn && credModal) {
+    const openM = () => { credModal.classList.add('open'); credModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; };
+    const closeM = () => { credModal.classList.remove('open'); credModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; };
+    credBtn.addEventListener('click', openM);
+    credModal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeM));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeM(); });
+  }
 </script>
 </body>
 </html>
