@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vikrant — Application Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0f0; color: #111; min-height: 100vh; }
+  .header { background: #111; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  .btn-nav { font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 1px solid #444; background: transparent; color: #ccc; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-nav:hover { background: #222; color: #fff; }
+  .btn-export { font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 1px solid #444; background: transparent; color: #ccc; cursor: pointer; }
+  .btn-export:hover { background: #222; }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: #ddd; border-bottom: 1px solid #ddd; }
+  .stat { background: #fff; padding: 14px 12px; text-align: center; }
+  .stat-num { font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 10px; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-num.blue { color: #2563eb; }
+  .stat-num.amber { color: #d97706; }
+  .stat-num.green { color: #16a34a; }
+  .stat-num.red { color: #dc2626; }
+  .stat-num.purple { color: #7c3aed; }
+  .form-bar { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 16px 24px; }
+  .form-bar h2 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-grid { display: grid; grid-template-columns: 2fr 2fr 1.5fr 1fr 1fr 1.5fr 1fr auto; gap: 8px; align-items: end; }
+  .form-group label { font-size: 11px; color: #888; display: block; margin-bottom: 4px; }
+  .form-group input, .form-group select { width: 100%; padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-family: inherit; background: #fafafa; }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: #111; background: #fff; }
+  .btn-add { background: #111; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; height: 34px; white-space: nowrap; }
+  .btn-add:hover { background: #333; }
+  .filter-bar { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 10px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .filter-bar input { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; width: 200px; }
+  .filter-pill { padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 12px; cursor: pointer; background: #fff; color: #555; }
+  .filter-pill.active { background: #111; color: #fff; border-color: #111; }
+  .filter-count { font-size: 11px; color: #888; margin-left: auto; }
+  .table-wrap { overflow-x: auto; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
+  thead { background: #fafafa; position: sticky; top: 0; z-index: 10; }
+  th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e5e5e5; white-space: nowrap; cursor: pointer; user-select: none; }
+  th:hover { color: #111; }
+  td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  tr:hover td { background: #fafafa; }
+  tr.rejected td { opacity: 0.5; }
+  .td-num { color: #bbb; font-size: 12px; width: 32px; }
+  .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .status-select { font-size: 11px; padding: 3px 6px; border-radius: 20px; border: none; cursor: pointer; font-family: inherit; font-weight: 500; }
+  .sel-applied { background: #dbeafe; color: #1e40af; }
+  .sel-waiting { background: #ede9fe; color: #4c1d95; }
+  .sel-screening { background: #fef9c3; color: #713f12; }
+  .sel-interview { background: #fde68a; color: #92400e; }
+  .sel-offer { background: #dcfce7; color: #166534; }
+  .sel-rejected { background: #fee2e2; color: #991b1b; }
+  .sel-withdrawn { background: #f3f4f6; color: #6b7280; }
+  .platform { font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #f3f4f6; color: #555; white-space: nowrap; }
+  .row-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.1s; }
+  tr:hover .row-actions { opacity: 1; }
+  .btn-tiny { font-size: 11px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ddd; background: #fff; cursor: pointer; color: #555; }
+  .btn-tiny.del { border-color: #fecaca; color: #dc2626; }
+  .btn-tiny.del:hover { background: #fef2f2; }
+  .note-text { color: #666; font-size: 12px; cursor: pointer; padding: 2px 4px; border-radius: 4px; display: block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .note-text:hover { background: #f5f5f5; }
+  .note-input { font-size: 12px; padding: 2px 6px; border: 1px solid #ddd; border-radius: 4px; width: 100%; font-family: inherit; }
+  .empty { text-align: center; padding: 60px 20px; color: #aaa; }
+  .td-link a { color: #2563eb; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div><h1>📋 Application Tracker</h1></div>
+  <div class="header-right">
+    <a class="btn-nav" href="framework.html">⬅ Back to Framework</a>
+    <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn-export" onclick="clearAll()">🗑 Clear All</button>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num blue" id="s-total">0</div><div class="stat-label">Total Applied</div></div>
+  <div class="stat"><div class="stat-num amber" id="s-screening">0</div><div class="stat-label">Screening</div></div>
+  <div class="stat"><div class="stat-num amber" id="s-interview">0</div><div class="stat-label">Interview</div></div>
+  <div class="stat"><div class="stat-num green" id="s-offer">0</div><div class="stat-label">Offers</div></div>
+  <div class="stat"><div class="stat-num red" id="s-rejected">0</div><div class="stat-label">Rejected</div></div>
+  <div class="stat"><div class="stat-num purple" id="s-rate">0%</div><div class="stat-label">Response Rate</div></div>
+</div>
+
+<div class="form-bar">
+  <h2>+ Log new application</h2>
+  <div class="form-grid">
+    <div class="form-group"><label>Job Role *</label><input id="f-role" type="text" placeholder="e.g. Performance Marketing Executive"></div>
+    <div class="form-group"><label>Company *</label><input id="f-company" type="text" placeholder="e.g. Schbang"></div>
+    <div class="form-group"><label>Location</label><input id="f-location" type="text" placeholder="e.g. Mumbai (On-site)"></div>
+    <div class="form-group"><label>Date Applied</label><input id="f-date" type="date"></div>
+    <div class="form-group"><label>Platform</label>
+      <select id="f-platform">
+        <option>LinkedIn</option><option>Naukri</option><option>Indeed</option>
+        <option>Company Website</option><option>Email</option><option>Instahyre</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Job Link</label><input id="f-link" type="url" placeholder="Paste job URL"></div>
+    <div class="form-group"><label>Status</label>
+      <select id="f-status">
+        <option value="applied">Applied</option><option value="waiting">Waiting</option>
+        <option value="screening">Screening</option><option value="interview">Interview</option>
+        <option value="offer">Offer</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option>
+      </select>
+    </div>
+    <div><label style="font-size:11px;color:transparent;display:block;margin-bottom:4px;">.</label><button class="btn-add" onclick="addApp()">+ Add</button></div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <input type="text" id="search" placeholder="🔍  Search role, company..." oninput="render()">
+  <button class="filter-pill active" data-filter="all" onclick="setFilter(this)">All</button>
+  <button class="filter-pill" data-filter="applied" onclick="setFilter(this)">Applied</button>
+  <button class="filter-pill" data-filter="screening" onclick="setFilter(this)">Screening</button>
+  <button class="filter-pill" data-filter="interview" onclick="setFilter(this)">Interview</button>
+  <button class="filter-pill" data-filter="offer" onclick="setFilter(this)">Offer</button>
+  <button class="filter-pill" data-filter="rejected" onclick="setFilter(this)">Rejected</button>
+  <button class="filter-pill" data-filter="withdrawn" onclick="setFilter(this)">Withdrawn</button>
+  <span class="filter-count" id="filter-count"></span>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th onclick="sortBy('role')">Role ↕</th>
+        <th onclick="sortBy('company')">Company ↕</th>
+        <th onclick="sortBy('location')">Location ↕</th>
+        <th onclick="sortBy('date')">Date ↕</th>
+        <th>Platform</th>
+        <th onclick="sortBy('status')">Status ↕</th>
+        <th>Notes</th>
+        <th>Link</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+  <div id="empty-state" class="empty" style="display:none;"><p>📭 No applications yet. Add your first one above!</p></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'vjh_shared_apps';
+let apps = [], currentFilter = 'all', sortKey = 'date', sortDir = -1;
+
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(apps)); window.dispatchEvent(new StorageEvent('storage', {key: STORAGE_KEY})); } catch(e) {} }
+function load() { try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : []; } catch(e) { return []; } }
+
+const statusClass = { applied:'sel-applied', waiting:'sel-waiting', screening:'sel-screening', interview:'sel-interview', offer:'sel-offer', rejected:'sel-rejected', withdrawn:'sel-withdrawn' };
+const statusLabel = { applied:'Applied', waiting:'Waiting', screening:'Screening', interview:'Interview 🎉', offer:'Offer 🎊', rejected:'Rejected', withdrawn:'Withdrawn' };
+
+function addApp() {
+  const role = document.getElementById('f-role').value.trim();
+  const company = document.getElementById('f-company').value.trim();
+  if (!role || !company) { alert('Role and Company are required.'); return; }
+  apps.unshift({ id: Date.now(), role, company, location: document.getElementById('f-location').value.trim(), date: document.getElementById('f-date').value, platform: document.getElementById('f-platform').value, link: document.getElementById('f-link').value.trim(), status: document.getElementById('f-status').value, notes: '' });
+  save();
+  ['f-role','f-company','f-location','f-link'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-status').value = 'applied';
+  render(); updateStats();
+}
+
+function updateStatus(id, val) { apps = apps.map(a => a.id === id ? {...a, status: val} : a); save(); render(); updateStats(); }
+function deleteApp(id) { if (!confirm('Remove this application?')) return; apps = apps.filter(a => a.id !== id); save(); render(); updateStats(); }
+function editNote(id) {
+  const cell = document.getElementById('note-' + id);
+  const current = apps.find(a => a.id === id)?.notes || '';
+  cell.innerHTML = `<input class="note-input" id="ni-${id}" value="${current.replace(/"/g,'&quot;')}" onblur="saveNote(${id})" onkeydown="if(event.key==='Enter')saveNote(${id})">`;
+  document.getElementById('ni-' + id).focus();
+}
+function saveNote(id) { const inp = document.getElementById('ni-' + id); if (!inp) return; apps = apps.map(a => a.id === id ? {...a, notes: inp.value.trim()} : a); save(); render(); }
+function setFilter(el) { document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); currentFilter = el.dataset.filter; render(); }
+function sortBy(key) { if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; } render(); }
+
+function getFiltered() {
+  const q = (document.getElementById('search').value || '').toLowerCase();
+  return apps.filter(a => currentFilter === 'all' || a.status === currentFilter).filter(a => !q || a.role.toLowerCase().includes(q) || a.company.toLowerCase().includes(q) || (a.location||'').toLowerCase().includes(q)).sort((a,b) => { let av=a[sortKey]||'',bv=b[sortKey]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
+}
+
+function render() {
+  const filtered = getFiltered();
+  const tbody = document.getElementById('table-body');
+  document.getElementById('empty-state').style.display = apps.length === 0 ? 'block' : 'none';
+  document.getElementById('filter-count').textContent = `Showing ${filtered.length} of ${apps.length}`;
+  if (filtered.length === 0 && apps.length > 0) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#aaa;">No results</td></tr>`; return; }
+  tbody.innerHTML = filtered.map((a,i) => `
+    <tr class="${a.status==='rejected'?'rejected':''}">
+      <td class="td-num">${filtered.length-i}</td>
+      <td><span class="truncate" style="max-width:180px;" title="${a.role}">${a.role}</span></td>
+      <td><span class="truncate" style="max-width:130px;" title="${a.company}">${a.company}</span></td>
+      <td style="color:#888;font-size:12px;">${a.location||'—'}</td>
+      <td style="color:#888;font-size:12px;white-space:nowrap;">${a.date?new Date(a.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'—'}</td>
+      <td><span class="platform">${a.platform}</span></td>
+      <td><select class="status-select ${statusClass[a.status]}" onchange="updateStatus(${a.id},this.value)">${Object.entries(statusLabel).map(([k,v])=>`<option value="${k}"${a.status===k?' selected':''}>${v}</option>`).join('')}</select></td>
+      <td id="note-${a.id}"><span class="note-text" title="${a.notes||''}" onclick="editNote(${a.id})">${a.notes||'+ add note'}</span></td>
+      <td>${a.link?`<a href="${a.link}" target="_blank">View ↗</a>`:'—'}</td>
+      <td><div class="row-actions"><button class="btn-tiny del" onclick="deleteApp(${a.id})">✕</button></div></td>
+    </tr>`).join('');
+}
+
+function updateStats() {
+  const total = apps.filter(a=>a.status!=='withdrawn').length;
+  const screening = apps.filter(a=>a.status==='screening').length;
+  const interview = apps.filter(a=>a.status==='interview').length;
+  const offer = apps.filter(a=>a.status==='offer').length;
+  const rejected = apps.filter(a=>a.status==='rejected').length;
+  const responded = screening+interview+offer+rejected;
+  const rate = total>0?Math.round((responded/total)*100):0;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-screening').textContent = screening;
+  document.getElementById('s-interview').textContent = interview;
+  document.getElementById('s-offer').textContent = offer;
+  document.getElementById('s-rejected').textContent = rejected;
+  document.getElementById('s-rate').textContent = rate+'%';
+}
+
+function exportCSV() {
+  const headers = ['#','Role','Company','Location','Date','Platform','Status','Notes','Link'];
+  const rows = apps.map((a,i)=>[i+1,`"${a.role}"`,`"${a.company}"`,`"${a.location||''}"`,a.date,a.platform,a.status,`"${a.notes||''}"`,a.link||'']);
+  const csv = [headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const el = document.createElement('a'); el.href=url; el.download='vikrant_applications.csv'; el.click();
+}
+
+function clearAll() { if (!confirm('Delete ALL applications?')) return; apps=[]; save(); render(); updateStats(); }
+
+apps = load();
+document.getElementById('f-date').valueAsDate = new Date();
+render(); updateStats();
+</script>
+</body>
+</html>
