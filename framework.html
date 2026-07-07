@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vikrant — Job Hunt Framework</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0f0; color: #111; min-height: 100vh; }
+  .header { background: #111; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .btn-nav { font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 1px solid #444; background: transparent; color: #ccc; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-nav:hover { background: #222; color: #fff; }
+  .btn-nav.primary { background: #fff; color: #111; border-color: #fff; font-weight: 600; }
+  .btn-nav.primary:hover { background: #eee; }
+
+  /* LIVE STATS FROM TRACKER */
+  .live-bar { background: #fff; border-bottom: 2px solid #111; padding: 14px 24px; display: flex; gap: 0; }
+  .live-stat { flex: 1; text-align: center; border-right: 1px solid #eee; padding: 0 8px; }
+  .live-stat:last-child { border-right: none; }
+  .live-num { font-size: 22px; font-weight: 700; }
+  .live-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .live-num.blue { color: #2563eb; }
+  .live-num.amber { color: #d97706; }
+  .live-num.green { color: #16a34a; }
+  .live-num.red { color: #dc2626; }
+  .live-num.purple { color: #7c3aed; }
+  .live-tag { font-size: 10px; color: #16a34a; background: #f0fdf4; padding: 2px 6px; border-radius: 10px; margin-left: 6px; }
+
+  .content { padding: 20px 24px; max-width: 860px; }
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; background: #fff; padding: 0 24px; overflow-x: auto; }
+  .tab { padding: 12px 16px; font-size: 13px; font-weight: 500; cursor: pointer; color: #666; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab.active { color: #111; border-bottom-color: #111; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #999; margin-bottom: 10px; margin-top: 16px; }
+
+  /* CHECKLIST */
+  .check-item { display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
+  .check-item:hover { background: #fafafa; }
+  .check-item.done { opacity: 0.55; }
+  .check-item.done .check-text { text-decoration: line-through; }
+  .check-box { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; font-size: 12px; }
+  .check-item.done .check-box { background: #16a34a; border-color: #16a34a; color: #fff; }
+  .check-text { font-size: 14px; color: #222; line-height: 1.4; font-weight: 500; }
+  .check-note { font-size: 12px; color: #888; margin-top: 3px; font-weight: 400; }
+
+  /* RECENT APPS IN FRAMEWORK */
+  .recent-app { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .recent-company { font-size: 13px; font-weight: 600; flex: 1; }
+  .recent-role { font-size: 12px; color: #888; }
+  .recent-date { font-size: 11px; color: #bbb; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+  .badge-applied { background: #dbeafe; color: #1e40af; }
+  .badge-screening { background: #fef9c3; color: #713f12; }
+  .badge-interview { background: #fde68a; color: #92400e; }
+  .badge-offer { background: #dcfce7; color: #166534; }
+  .badge-rejected { background: #fee2e2; color: #991b1b; }
+  .badge-withdrawn { background: #f3f4f6; color: #6b7280; }
+  .badge-waiting { background: #ede9fe; color: #4c1d95; }
+
+  /* COMPANIES */
+  .company-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+  .company-name { font-size: 15px; font-weight: 600; }
+  .company-hq { font-size: 12px; color: #666; margin-top: 2px; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .tag { font-size: 11px; padding: 3px 9px; border-radius: 20px; }
+  .tag-role { background: #dbeafe; color: #1e40af; }
+  .tag-platform { background: #dcfce7; color: #166534; }
+  .tag-fit { background: #fef9c3; color: #713f12; }
+  .company-note { font-size: 12px; color: #555; margin-top: 8px; line-height: 1.5; }
+  .applied-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: #dcfce7; color: #166534; margin-left: 8px; }
+
+  /* GAPS */
+  .gap-card { border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+  .gap-red { background: #fef2f2; border: 1px solid #fecaca; }
+  .gap-yellow { background: #fefce8; border: 1px solid #fde68a; }
+  .gap-green { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .gap-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .gap-desc { font-size: 13px; line-height: 1.5; }
+  .gap-fix { font-size: 12px; margin-top: 6px; font-weight: 500; font-style: italic; }
+
+  /* STEPS */
+  .step { display: flex; gap: 14px; margin-bottom: 16px; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; background: #f5f5f5; border: 1px solid #ddd; color: #111; }
+  .step-num.done { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+  .step-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: #444; line-height: 1.5; }
+
+  /* EMAILS */
+  .email-template { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+  .email-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 8px; }
+  .email-body { font-size: 13px; color: #222; line-height: 1.7; white-space: pre-wrap; }
+  .highlight { background: #fef9c3; padding: 1px 3px; border-radius: 3px; }
+  .copy-btn { margin-top: 10px; font-size: 12px; padding: 5px 12px; border-radius: 6px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+  .copy-btn:hover { background: #f5f5f5; }
+
+  .info-box { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+  .info-box strong { font-size: 13px; display: block; margin-bottom: 4px; }
+  .info-box p { font-size: 12px; color: #555; line-height: 1.5; }
+  .info-box code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div><h1>🗺 Job Hunt Framework</h1><div style="font-size:12px;color:#888;margin-top:2px;">Strategy, targets, templates & checklist</div></div>
+  <div style="display:flex;gap:8px;">
+    <a class="btn-nav primary" href="tracker.html">📋 Open Tracker →</a>
+  </div>
+</div>
+
+<!-- LIVE STATS (reads from tracker's shared storage) -->
+<div class="live-bar">
+  <div class="live-stat"><div class="live-num blue" id="ls-total">0</div><div class="live-label">Applied <span class="live-tag">live</span></div></div>
+  <div class="live-stat"><div class="live-num amber" id="ls-screening">0</div><div class="live-label">Screening</div></div>
+  <div class="live-stat"><div class="live-num amber" id="ls-interview">0</div><div class="live-label">Interview</div></div>
+  <div class="live-stat"><div class="live-num green" id="ls-offer">0</div><div class="live-label">Offers</div></div>
+  <div class="live-stat"><div class="live-num red" id="ls-rejected">0</div><div class="live-label">Rejected</div></div>
+  <div class="live-stat"><div class="live-num purple" id="ls-rate">0%</div><div class="live-label">Response Rate</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview',this)">📊 Overview</div>
+  <div class="tab" onclick="showTab('companies',this)">🎯 Companies</div>
+  <div class="tab" onclick="showTab('strategy',this)">📋 Strategy</div>
+  <div class="tab" onclick="showTab('emails',this)">✉️ Templates</div>
+  <div class="tab" onclick="showTab('tools',this)">🤖 AI Tools</div>
+</div>
+
+<div class="content">
+
+  <!-- OVERVIEW -->
+  <div id="overview" class="panel active">
+
+    <div class="section-label" style="margin-top:0;">Checklist — click to tick off</div>
+    <div class="check-item done" data-id="cv" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><div class="check-text">CV — Final version done</div><div class="check-note">Vikrant_Kalukhe_CV_Final.pdf · Black & white · Reverse chrono · Honest language</div></div></div>
+    <div class="check-item done" data-id="portfolio" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><div class="check-text">Portfolio — Live at iamvikrant97.github.io</div><div class="check-note">Dark theme · Motion · Reels · Credentials · Case studies</div></div></div>
+    <div class="check-item done" data-id="google-ads" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><div class="check-text">Google Ads Search Certification</div><div class="check-note">Issued May 2026 · Valid to May 2027 · ID: 181778511 · On CV + LinkedIn</div></div></div>
+    <div class="check-item done" data-id="meta" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><div class="check-text">Meta Blueprint — Digital Marketing Learning Path</div><div class="check-note">On CV + LinkedIn</div></div></div>
+    <div class="check-item done" data-id="linkedin" onclick="toggleCheck(this)"><div class="check-box">✓</div><div><div class="check-text">LinkedIn optimised</div><div class="check-note">About · Featured card · 28 skills · Certs · Banner · Portfolio link</div></div></div>
+    <div class="check-item" data-id="campaign" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Run live Meta Ads Manager campaign (₹500–1000)</div><div class="check-note">Not Boost — proper Ads Manager. Document setup + results = your case study</div></div></div>
+    <div class="check-item" data-id="ga4" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Complete GA4 Certification</div><div class="check-note">skillshop.google.com → free → ~6 hours → update CV + LinkedIn</div></div></div>
+    <div class="check-item" data-id="hubspot" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Complete HubSpot Content Marketing Certification</div><div class="check-note">academy.hubspot.com → free</div></div></div>
+    <div class="check-item" data-id="connect" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Connect on LinkedIn with people at target companies BEFORE applying</div><div class="check-note">2–3 people per company · Use Templates tab for the connection note</div></div></div>
+    <div class="check-item" data-id="first5" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Send first 5 applications</div><div class="check-note">Start: Schbang, White Rivers, iProspect → then NIVEA, L'Oréal</div></div></div>
+    <div class="check-item" data-id="followup" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Follow up on applications (5–7 days after sending)</div><div class="check-note">Short LinkedIn DM · Template in the Templates tab</div></div></div>
+    <div class="check-item" data-id="vaibhav" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Update Vaibhav Sir once interviews are lined up</div><div class="check-note">Not before · Template in Templates tab</div></div></div>
+    <div class="check-item" data-id="connections" onclick="toggleCheck(this)"><div class="check-box"></div><div><div class="check-text">Grow LinkedIn connections to 200+</div><div class="check-note">Currently at 38 · Connect: Huddersfield + Welingkar classmates, Mumbai marketers</div></div></div>
+
+    <div class="section-label" style="margin-top:20px;">Recent applications <a href="tracker.html" style="font-size:11px;color:#2563eb;margin-left:8px;">View all in tracker →</a></div>
+    <div id="recent-apps"></div>
+  </div>
+
+  <!-- COMPANIES -->
+  <div id="companies" class="panel">
+    <div class="section-label" style="margin-top:0;">Priority 1 — German/European MNCs (Germany transfer path)</div>
+
+    <div class="company-card">
+      <div class="company-name">🔴 Beiersdorf / NIVEA India <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#ede9fe;color:#4c1d95;margin-left:8px;">🇩🇪 Germany path</span><span class="applied-badge" id="co-beiersdorf" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">HQ: Hamburg · India: Phoenix Market City, Kurla, Mumbai · beiersdorf.com/career</div>
+      <div class="tags"><span class="tag tag-role">Digital Marketing Executive</span><span class="tag tag-role">Brand Marketing Associate</span><span class="tag tag-fit">🔥 Best fit — hidden gem</span></div>
+      <div class="company-note">German HQ, consumer brand, Mumbai office at Kurla. Strong internal mobility to Germany. Photography + content creation directly relevant. Less competition than L'Oréal.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🔴 L'Oréal India <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#ede9fe;color:#4c1d95;margin-left:8px;">🇪🇺 EU path</span><span class="applied-badge" id="co-loreal" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">HQ: Paris · India: Mumbai · careers.loreal.com</div>
+      <div class="tags"><span class="tag tag-role">Digital Marketing Executive</span><span class="tag tag-role">Content & Social Executive</span><span class="tag tag-fit">🔥 Top target</span></div>
+      <div class="company-note">Strong digital division. Hires freshers with creative + analytics combo. Apply on their portal directly — not just Naukri.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🟡 Henkel India <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#ede9fe;color:#4c1d95;margin-left:8px;">🇩🇪 Germany path</span><span class="applied-badge" id="co-henkel" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">HQ: Düsseldorf · India: Mumbai · henkel.com/careers</div>
+      <div class="tags"><span class="tag tag-role">Marketing Executive</span><span class="tag tag-platform">henkel.com/careers</span></div>
+      <div class="company-note">German MNC, less competitive than NIVEA for entry-level. Good internal transfer programme to Germany.</div>
+    </div>
+
+    <div class="section-label">Priority 2 — Global FMCG MNCs</div>
+
+    <div class="company-card">
+      <div class="company-name">🟡 Hindustan Unilever (HUL)<span class="applied-badge" id="co-hul" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Andheri, Mumbai · careers.unilever.com</div>
+      <div class="tags"><span class="tag tag-role">Performance Marketing Executive</span><span class="tag tag-fit">High salary</span></div>
+      <div class="company-note">Actively hires Performance Marketing Executives in Mumbai. Values Google Ads cert.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🟡 Nestlé India<span class="applied-badge" id="co-nestle" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Mumbai · nestle.in/jobs</div>
+      <div class="tags"><span class="tag tag-role">Digital Marketing Executive</span></div>
+      <div class="company-note">Good learning culture. Regular entry-level openings on LinkedIn.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🟡 Reckitt India<span class="applied-badge" id="co-reckitt" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Mumbai · reckitt.com/careers</div>
+      <div class="tags"><span class="tag tag-role">Performance Marketing Associate</span></div>
+      <div class="company-note">Dettol, Harpic, Durex. Strong entry-level digital roles.</div>
+    </div>
+
+    <div class="section-label">Priority 3 — Mumbai Agencies (experience fast)</div>
+
+    <div class="company-card">
+      <div class="company-name">🟢 Schbang<span class="applied-badge" id="co-schbang" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Mumbai · LinkedIn / schbang.com</div>
+      <div class="tags"><span class="tag tag-role">Performance Marketing Executive</span><span class="tag tag-fit">Best for freshers</span></div>
+      <div class="company-note">Fast-growing, great learning, works with big brands. Top first agency choice.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🟢 White Rivers Media<span class="applied-badge" id="co-white-rivers" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Mumbai · LinkedIn / whiteriversmedia.com</div>
+      <div class="tags"><span class="tag tag-role">Paid Media Executive</span><span class="tag tag-fit">Creative culture</span></div>
+      <div class="company-note">Creative + performance blend. Good fit for your photography background.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🟢 iProspect India (Dentsu)<span class="applied-badge" id="co-iprospect" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Mumbai · LinkedIn / iprospect.com</div>
+      <div class="tags"><span class="tag tag-role">Paid Search Executive</span><span class="tag tag-fit">Paid media focus</span></div>
+      <div class="company-note">Specialist performance agency under Dentsu. Google Ads cert directly relevant.</div>
+    </div>
+
+    <div class="company-card">
+      <div class="company-name">🟢 Windchimes Communications<span class="applied-badge" id="co-windchimes" style="display:none;">✓ Applied</span></div>
+      <div class="company-hq">Mumbai · LinkedIn / windchimes.in</div>
+      <div class="tags"><span class="tag tag-role">Digital Marketing Executive</span></div>
+    </div>
+  </div>
+
+  <!-- STRATEGY -->
+  <div id="strategy" class="panel">
+    <div class="section-label" style="margin-top:0;">Steps — in order</div>
+    <div class="step"><div class="step-num done">✓</div><div class="step-content"><div class="step-title" style="text-decoration:line-through;opacity:0.5;">Build CV, portfolio, LinkedIn</div><div class="step-desc" style="color:#16a34a;">Done. CV Final. Portfolio live. LinkedIn optimised.</div></div></div>
+    <div class="step"><div class="step-num done">✓</div><div class="step-content"><div class="step-title" style="text-decoration:line-through;opacity:0.5;">Google Ads + Meta certifications</div><div class="step-desc" style="color:#16a34a;">Done. Both on CV and LinkedIn.</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Run one live Meta Ads campaign</div><div class="step-desc">₹500–1000 on Ads Manager (not Boost). Document setup, audience, creative, results. This closes your biggest gap before MNC interviews.</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Connect on LinkedIn BEFORE applying</div><div class="step-desc">Find 2–3 people in marketing at each target company. Connect with warm note (Templates tab). Then apply. When your CV lands, your name is already familiar.</div></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Tailor CV per job description — never send same CV twice</div><div class="step-desc">Use the AI Tools tab for the exact Claude prompt to tailor in 2 minutes. NIVEA = photography + visual content. HUL = Google Ads + performance. Agencies = speed + social.</div></div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-content"><div class="step-title">Apply via company portals first, then job boards</div><div class="step-desc">beiersdorf.com/career · careers.loreal.com · careers.unilever.com · nestle.in/jobs · Then LinkedIn Jobs, Naukri, Instahyre for same roles.</div></div></div>
+    <div class="step"><div class="step-num">7</div><div class="step-content"><div class="step-title">Follow up 5–7 days after applying</div><div class="step-desc">Short LinkedIn DM to recruiter. Template in Templates tab. 80% of candidates never follow up — this alone puts you ahead.</div></div></div>
+    <div class="step"><div class="step-num">8</div><div class="step-content"><div class="step-title">Update Vaibhav Sir once you have interviews</div><div class="step-desc">Not before. Once you're in the process, a warm word from him could tip the scales. Template in Templates tab.</div></div></div>
+  </div>
+
+  <!-- EMAILS -->
+  <div id="emails" class="panel">
+    <div class="section-label" style="margin-top:0;">Template 1 — LinkedIn connection request</div>
+    <div class="email-template">
+      <div class="email-label">Max 300 characters</div>
+      <div class="email-body">Hi <span class="highlight">[Name]</span>, I'm based in Mumbai and looking to start my career in digital marketing. I've been following <span class="highlight">[Company's]</span> work closely and would love to connect!</div>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="section-label">Template 2 — LinkedIn DM after connecting</div>
+    <div class="email-template">
+      <div class="email-body">Hi <span class="highlight">[Name]</span>,
+
+Thanks for connecting! I'm Vikrant, an MSc Digital Marketing graduate (UK) based in Mumbai. I've been following <span class="highlight">[Company's]</span> digital work closely, especially <span class="highlight">[specific campaign or post]</span>.
+
+I'm currently looking for entry-level digital marketing roles and would love to hear what skills matter most on your team. Even 10 minutes would mean a lot.
+
+No pressure at all if you're busy!</div>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="section-label">Template 3 — Cold email to marketing manager</div>
+    <div class="email-template">
+      <div class="email-body">Subject: Entry-Level Digital Marketing Role — MSc Graduate, Mumbai
+
+Hi <span class="highlight">[Name]</span>,
+
+I'm Vikrant Kalukhe, an MSc Digital Marketing graduate (University of Huddersfield, Merit) based in Mumbai. I came across <span class="highlight">[Company's]</span> recent <span class="highlight">[campaign/post]</span> and it's exactly the kind of work I want to be part of.
+
+I'm Google Ads certified, have experience building content for Instagram and YouTube, and bring a creative background from over a decade of photography. Portfolio: iamvikrant97.github.io
+
+I've attached my CV. Happy to chat whenever suits.
+
+Vikrant Kalukhe
+vikrantkalukhe@gmail.com | linkedin.com/in/vikrantsk20</div>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="section-label">Template 4 — Follow up after applying (5–7 days)</div>
+    <div class="email-template">
+      <div class="email-body">Hi <span class="highlight">[Recruiter Name]</span>,
+
+I applied for the <span class="highlight">[Role]</span> position at <span class="highlight">[Company]</span> last week and wanted to follow up briefly. I'm genuinely excited about this role.
+
+Happy to share anything additional if that helps. Thank you!</div>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="section-label">Template 5 — Updating Vaibhav Sir (once you have interviews)</div>
+    <div class="email-template">
+      <div class="email-label">Only send once you have actual interviews lined up</div>
+      <div class="email-body">Hi Vaibhav sir, hope you're doing well! Quick update — I've got interviews coming up with <span class="highlight">[Company]</span> for a <span class="highlight">[Role]</span> role. Your advice really guided me here. If you happen to know anyone there or have any tips, I'd really appreciate it!</div>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- AI TOOLS -->
+  <div id="tools" class="panel">
+    <div class="info-box"><strong>Jobscan.co — ATS Score Checker</strong><p>Paste your CV + job description. Shows missing keywords and ATS match score. Free for 5 scans/month. Do this before every MNC application.<br><br><code>jobscan.co → paste CV left → paste JD right → scan → add missing keywords you can honestly claim</code></p></div>
+    <div class="info-box"><strong>Claude — Tailor CV per job</strong><p>Paste any JD and Claude rewrites your CV bullets to match it without adding false experience.<br><br><code>"Here is a job description: [paste JD]. Here is my CV: [paste CV]. Rewrite my bullets to match this JD without adding experience I don't have. Keep language honest and direct, not AI-sounding."</code></p></div>
+    <div class="info-box"><strong>Claude — Cover letter per application</strong><p>Most candidates don't send one. This alone makes you stand out.<br><br><code>"Write a cover letter for me applying to [Company] for [Role]. Background: MSc Digital Marketing UK (Merit), Google Ads certified, Meta Blueprint done, 10+ years photography, portfolio at iamvikrant97.github.io, Mumbai-based. Tone: genuine, direct, not AI. Max 250 words."</code></p></div>
+    <div class="info-box"><strong>Hunter.io — Find company emails</strong><p>Type in a company domain (e.g. beiersdorf.com) to get the email format and often actual employee emails. Free for 25 searches/month.<br><br><code>hunter.io → Domain Search → company website → filter by Marketing department</code></p></div>
+    <div class="info-box"><strong>LinkedIn Sales Navigator — Free Trial</strong><p>Find the exact marketing manager at your target companies before applying. Cancel before trial ends.<br><br><code>Filters: Company → [NIVEA India] + Function → Marketing + Seniority → Manager + Location → Mumbai</code></p></div>
+    <div class="info-box"><strong>Interview prep — campaign walkthrough</strong><p>Once you've run your live Meta campaign, use this to prep your answer for "walk me through a campaign you ran."<br><br><code>"Help me prepare an interview answer for 'walk me through a campaign you ran.' Campaign: [objective, audience, budget, creative, results]. Under 2 mins spoken. Structure: objective → approach → result → learning."</code></p></div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'vjh_shared_apps';
+const CHECK_KEY = 'vjh_checklist';
+
+// Load apps from shared storage and update live stats
+function loadApps() { try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : []; } catch(e) { return []; } }
+
+function updateLiveStats() {
+  const apps = loadApps();
+  const total = apps.filter(a=>a.status!=='withdrawn').length;
+  const screening = apps.filter(a=>a.status==='screening').length;
+  const interview = apps.filter(a=>a.status==='interview').length;
+  const offer = apps.filter(a=>a.status==='offer').length;
+  const rejected = apps.filter(a=>a.status==='rejected').length;
+  const responded = screening+interview+offer+rejected;
+  const rate = total>0?Math.round((responded/total)*100):0;
+  document.getElementById('ls-total').textContent = total;
+  document.getElementById('ls-screening').textContent = screening;
+  document.getElementById('ls-interview').textContent = interview;
+  document.getElementById('ls-offer').textContent = offer;
+  document.getElementById('ls-rejected').textContent = rejected;
+  document.getElementById('ls-rate').textContent = rate+'%';
+
+  // Recent apps
+  const recent = apps.slice(0,5);
+  const badgeClass = { applied:'badge-applied', waiting:'badge-waiting', screening:'badge-screening', interview:'badge-interview', offer:'badge-offer', rejected:'badge-rejected', withdrawn:'badge-withdrawn' };
+  const badgeLabel = { applied:'Applied', waiting:'Waiting', screening:'Screening', interview:'Interview 🎉', offer:'Offer 🎊', rejected:'Rejected', withdrawn:'Withdrawn' };
+  const container = document.getElementById('recent-apps');
+  if (apps.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;font-size:13px;">No applications yet. <a href="tracker.html" style="color:#2563eb;">Open tracker to log your first one →</a></div>';
+  } else {
+    container.innerHTML = recent.map(a => `
+      <div class="recent-app">
+        <div style="flex:1;">
+          <div class="recent-company">${a.company}</div>
+          <div class="recent-role">${a.role}</div>
+        </div>
+        <div class="recent-date">${a.date?new Date(a.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):''}</div>
+        <span class="badge ${badgeClass[a.status]}">${badgeLabel[a.status]}</span>
+      </div>`).join('') + (apps.length > 5 ? `<a href="tracker.html" style="font-size:12px;color:#2563eb;display:block;text-align:center;margin-top:8px;">View all ${apps.length} applications in tracker →</a>` : '');
+  }
+
+  // Show "Applied" badges on company cards
+  const companyMap = { beiersdorf: ['beiersdorf','nivea'], loreal: ["l'oréal",'loreal'], henkel: ['henkel'], hul: ['unilever','hul'], nestle: ['nestl'], reckitt: ['reckitt'], schbang: ['schbang'], 'white-rivers': ['white rivers'], iprospect: ['iprospect'], windchimes: ['windchimes'] };
+  const appliedCompanies = apps.map(a=>a.company.toLowerCase());
+  Object.entries(companyMap).forEach(([id, keywords]) => {
+    const el = document.getElementById('co-'+id);
+    if (!el) return;
+    const matched = appliedCompanies.some(c => keywords.some(k => c.includes(k)));
+    el.style.display = matched ? 'inline' : 'none';
+  });
+}
+
+// Listen for changes from tracker (same tab or another tab)
+window.addEventListener('storage', e => { if (e.key === STORAGE_KEY) updateLiveStats(); });
+
+// CHECKLIST
+const defaultDone = ['cv','portfolio','google-ads','meta','linkedin'];
+let checked = (() => { try { const d = localStorage.getItem(CHECK_KEY); return d ? JSON.parse(d) : defaultDone; } catch(e) { return defaultDone; } })();
+
+function saveChecked() { try { localStorage.setItem(CHECK_KEY, JSON.stringify(checked)); } catch(e) {} }
+
+function toggleCheck(el) {
+  const id = el.dataset.id;
+  if (checked.includes(id)) { checked = checked.filter(x=>x!==id); el.classList.remove('done'); el.querySelector('.check-box').textContent=''; }
+  else { checked.push(id); el.classList.add('done'); el.querySelector('.check-box').textContent='✓'; }
+  saveChecked();
+}
+
+function initChecklist() {
+  document.querySelectorAll('.check-item').forEach(el => {
+    if (checked.includes(el.dataset.id)) { el.classList.add('done'); el.querySelector('.check-box').textContent='✓'; }
+  });
+}
+
+function showTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function copyText(btn) {
+  navigator.clipboard.writeText(btn.previousElementSibling.innerText).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',2000); });
+}
+
+initChecklist();
+updateLiveStats();
+setInterval(updateLiveStats, 3000); // refresh every 3 seconds
+</script>
+</body>
+</html>
