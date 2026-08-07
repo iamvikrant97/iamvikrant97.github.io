@@ -301,6 +301,22 @@ footer .made{ font-size:12px; }
   .navlinks.open{ display:flex; position:absolute; top:60px; right:20px; flex-direction:column; background:var(--bg2); padding:20px; border-radius:14px; border:1px solid var(--line); gap:16px; }
   .burger{ display:flex; }
 }
+
+  /* ===== LIVE CAMPAIGN DATA SECTION ===== */
+  #live-data{ padding:70px 0; border-top:1px solid var(--line); }
+  .ld-wrap{ max-width:1080px; margin:0 auto; padding:0 32px; }
+  .ld-eyebrow{ display:inline-flex; align-items:center; gap:12px; font-size:13px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:var(--amber); margin-bottom:14px; }
+  .ld-dash{ width:34px; height:1px; background:var(--amber); display:inline-block; }
+  .ld-title{ font-family:"Fraunces",serif; font-weight:500; font-size:clamp(26px,4vw,36px); letter-spacing:-.3px; margin-bottom:10px; }
+  .ld-intro{ color:var(--muted); font-size:16px; max-width:560px; line-height:1.55; margin-bottom:34px; }
+  .ld-shots{ display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+  .ld-shot img{ width:100%; border:1px solid var(--line); border-radius:12px; display:block; }
+  .ld-cap{ margin-top:14px; }
+  .ld-cap b{ font-family:"Fraunces",serif; font-weight:600; color:var(--cream); font-size:17px; }
+  .ld-cap p{ color:var(--muted); font-size:14px; line-height:1.5; margin-top:5px; }
+  .ld-btn{ display:inline-block; margin-top:30px; color:#FFB23E; font-weight:700; font-size:15px; text-decoration:none; }
+  .ld-btn:hover{ text-decoration:underline; }
+  @media(max-width:720px){ .ld-shots{ grid-template-columns:1fr; } }
 </style>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNXNH7FQJR"></script>
@@ -352,6 +368,27 @@ footer .made{ font-size:12px; }
     </div>
   </div>
 </section>
+
+  <!-- ===== LIVE CAMPAIGN DATA SECTION ===== -->
+  <section id="live-data">
+    <div class="ld-wrap">
+      <span class="ld-eyebrow"><span class="ld-dash"></span>Live campaign &middot; real spend</span>
+      <h2 class="ld-title">The numbers, straight from Ads Manager.</h2>
+      <p class="ld-intro">A self-funded Meta Ads campaign I built and ran end to end. Two quick reads below. The full breakdown is a click away.</p>
+      <div class="ld-shots">
+        <div class="ld-shot">
+          <img src="shot_results.jpg" alt="Ads Manager results: 3,506 profile visits, Rs 1,270 spent, 19% below benchmark">
+          <div class="ld-cap"><b>Beat the benchmark.</b><p>3,506 profile visits at &#8377;0.36 each, 19% below comparable ad sets by Meta&rsquo;s own comparison.</p></div>
+        </div>
+        <div class="ld-shot">
+          <img src="shot_audience.jpg" alt="Age and gender breakdown with cost per result by segment">
+          <div class="ld-cap"><b>Read the audience.</b><p>Women converted cheaper than men, &#8377;0.33 vs &#8377;0.39, a clear lever for the next campaign.</p></div>
+        </div>
+      </div>
+      <a class="ld-btn" href="meta-campaign.html">Read the full analysis &rarr;</a>
+    </div>
+  </section>
+
 
 <!-- ============ MARQUEE ============ -->
 <div class="marquee" aria-hidden="true">
