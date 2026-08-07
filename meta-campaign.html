@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Ads Campaign — Vikrant Kalukhe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --espresso:#1B1512;--espresso-2:#221A16;--card:#241B16;
+    --amber:#E9A23B;--amber-bright:#FFB23E;--cream:#F3E9DA;
+    --muted:#B7A793;--line:rgba(243,233,218,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--espresso);color:var(--cream);font-family:'Hanken Grotesk',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
+  a{color:var(--amber-bright);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .top{border-bottom:1px solid var(--line);padding:22px 0}
+  .top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .name{font-family:'Fraunces',serif;font-weight:600;font-size:18px;letter-spacing:.2px}
+  .back{font-size:14px;color:var(--muted)}
+
+  .hero{padding:72px 0 40px}
+  .eyebrow{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+  .eyebrow::after{content:"";height:1px;flex:1;background:var(--line)}
+  h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(34px,6vw,58px);line-height:1.04;letter-spacing:-.5px;margin-bottom:20px}
+  h1 em{font-style:italic;color:var(--amber-bright)}
+  .lede{font-size:19px;color:var(--muted);max-width:660px}
+
+  .halves{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;margin:44px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .half{padding:26px 28px}
+  .half .k{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:8px}
+  .half .v{font-family:'Fraunces',serif;font-size:22px;color:var(--cream)}
+  .half p{font-size:14px;color:var(--muted);margin-top:6px}
+  .plus{font-family:'Fraunces',serif;font-size:28px;color:var(--amber-bright);padding:0 6px}
+
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:8px 0}
+  .metric{background:var(--card);padding:26px 20px;text-align:center}
+  .metric .num{font-family:'Fraunces',serif;font-size:clamp(26px,4vw,38px);color:var(--amber-bright);line-height:1}
+  .metric .lbl{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:10px}
+
+  section.block{padding:40px 0;border-top:1px solid var(--line)}
+  h2{font-family:'Fraunces',serif;font-weight:500;font-size:28px;margin-bottom:18px;letter-spacing:-.3px}
+  .grid2{display:grid;grid-template-columns:180px 1fr;gap:20px 32px;align-items:start}
+  .grid2 .k{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);font-weight:600;padding-top:2px}
+  .grid2 .v{color:var(--cream)}
+  p.body{color:var(--cream);margin-bottom:14px;max-width:700px}
+  .muted{color:var(--muted)}
+
+  .shot{border:1px dashed rgba(233,162,59,.4);border-radius:12px;background:var(--espresso-2);padding:34px 24px;text-align:center;color:var(--muted);font-size:14px;margin:18px 0}
+  .shot strong{color:var(--amber);display:block;margin-bottom:6px;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+
+  ul.clean{list-style:none;max-width:700px}
+  ul.clean li{padding:12px 0 12px 22px;position:relative;color:var(--cream);border-bottom:1px solid var(--line)}
+  ul.clean li:last-child{border-bottom:0}
+  ul.clean li::before{content:"";position:absolute;left:0;top:21px;width:7px;height:7px;background:var(--amber);border-radius:50%}
+  ul.clean li strong{color:var(--amber-bright);font-weight:600}
+
+  .note{background:var(--espresso-2);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:10px;padding:20px 22px;color:var(--muted);font-size:15px;max-width:720px}
+  .note strong{color:var(--cream)}
+  .ph{color:var(--amber-bright);background:rgba(255,178,62,.1);padding:1px 7px;border-radius:5px;font-weight:600}
+
+  .fig{margin:20px 0}
+  .fig img{width:100%;border:1px solid var(--line);border-radius:12px;display:block}
+  .figcap{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+  .figrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}
+  .figrow .fig{margin:0}
+  .cta-wrap{display:flex;justify-content:center;margin:6px 0 4px}
+  .analysis-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--amber);color:var(--espresso);font-weight:700;font-size:15px;
+    padding:14px 26px;border-radius:10px;text-decoration:none;
+  }
+  .analysis-btn:hover{background:var(--amber-bright);text-decoration:none;gap:14px;transition:gap .2s}
+  @media(max-width:640px){.figrow{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;margin-top:20px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:14px}
+
+  @media(max-width:640px){
+    .halves{grid-template-columns:1fr}.plus{padding:2px 0}
+    .metrics{grid-template-columns:repeat(2,1fr)}
+    .grid2{grid-template-columns:1fr;gap:6px 0}.grid2 .k{padding-top:14px}
+    .hero{padding:48px 0 30px}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="name">Vikrant Kalukhe</div>
+    <a class="back" href="index.html">← Back to work</a>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Case Study 03 &nbsp;·&nbsp; Live Meta Campaign</div>
+    <h1>I built the ad, then I <em>ran the spend</em> behind it.</h1>
+    <p class="lede">A self-funded engagement campaign through Meta Ads Manager. Real budget, real audience, real numbers. The first two studies on this site were academic. This one moved actual money and delivered profile visits at 19% below the cost of comparable ad sets.</p>
+
+    <div class="halves">
+      <div class="half">
+        <div class="k">The creative</div>
+        <div class="v">Shot and cut by me</div>
+        <p>A video built from my own photography and edit. No stock, no outsourced asset.</p>
+      </div>
+      <div class="plus">×</div>
+      <div class="half">
+        <div class="k">The media</div>
+        <div class="v">Run in Ads Manager</div>
+        <p>Objective, audience, budget and optimisation set up by hand. Not Boost.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="metrics">
+    <div class="metric"><div class="num">₹1,270</div><div class="lbl">Total spend</div></div>
+    <div class="metric"><div class="num">3,506</div><div class="lbl">Profile visits</div></div>
+    <div class="metric"><div class="num">₹0.36</div><div class="lbl">Cost per result</div></div>
+    <div class="metric"><div class="num">-19%</div><div class="lbl">vs peer ad sets</div></div>
+  </div>
+  <div class="cta-wrap">
+    <a class="analysis-btn" href="Meta_Campaign_Critical_Analysis.pdf" target="_blank">
+      Read the full critical analysis (PDF)
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</div>
+
+<section class="block">
+  <div class="wrap">
+    <h2>The brief</h2>
+    <div class="grid2">
+      <div class="k">Goal</div>
+      <div class="v">Drive Instagram profile visits to my photography page, and learn campaign setup end to end with my own money on the line.</div>
+      <div class="k">Campaign</div>
+      <div class="v">Spiti Reel — Profile Visits</div>
+      <div class="k">Objective</div>
+      <div class="v">Engagement, optimised for Instagram profile visits</div>
+      <div class="k">Platform</div>
+      <div class="v">Meta Ads Manager (Instagram + Facebook)</div>
+      <div class="k">Budget</div>
+      <div class="v">₹1,270.30 self-funded</div>
+      <div class="k">Run</div>
+      <div class="v">31 July – 6 August 2026 (7-day flight)</div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <h2>The creative</h2>
+    <p class="body">This is the part most junior paid media applicants outsource. I did not. The ad below is my own photography and edit, built for the feed it ran in.</p>
+    <div class="fig">
+      <img src="meta_creative.jpg" alt="The Spiti travel Reel running across Instagram feed, Stories, Reels and profile placements">
+      <div class="figcap">The Reel as it ran across Instagram feed, Stories, Reels, Explore and profile placements.</div>
+    </div>
+    <p class="body muted">The hook worked. Delivering profile visits 19% cheaper than comparable ad sets tells me the opening frame and visual style earned attention in a crowded feed.</p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <h2>Results</h2>
+    <p class="body">Pulled from Ads Manager. No estimates, no rounding up.</p>
+    <div class="grid2">
+      <div class="k">Reach</div><div class="v">63,186 accounts</div>
+      <div class="k">Impressions</div><div class="v">77,827</div>
+      <div class="k">Profile visits</div><div class="v">3,506</div>
+      <div class="k">CTR</div><div class="v">~4.5% (visits ÷ impressions)</div>
+      <div class="k">Cost per result</div><div class="v">₹0.36</div>
+      <div class="k">Vs peers</div><div class="v">19% cheaper than comparable ad sets (Meta benchmark)</div>
+      <div class="k">Follows</div><div class="v">13 (bonus result)</div>
+      <div class="k">Placement</div><div class="v">Almost entirely Instagram (Reel format)</div>
+      <div class="k">Video plays</div><div class="v">~16,500 three-second plays, ~1,000 ThruPlays</div>
+    </div>
+    <div class="fig">
+      <img src="meta_results.jpg" alt="Ads Manager results: 3,506 profile visits, Rs 1,270.30 spent, 19% below peer benchmark">
+      <div class="figcap">Ads Manager overview, including Meta's benchmark: 19% below comparable ad sets.</div>
+    </div>
+    <div class="figrow">
+      <div class="fig">
+        <img src="meta_audience.jpg" alt="Age and gender breakdown with cost per result by segment">
+        <div class="figcap">Cost per result by segment: women ₹0.33, men ₹0.39.</div>
+      </div>
+      <div class="fig">
+        <img src="meta_platform.jpg" alt="Placement per platform showing near-total Instagram delivery">
+        <div class="figcap">Delivery concentrated almost entirely on Instagram.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <h2>What I read from the numbers</h2>
+    <p class="body">Running a campaign is easy. Knowing what the result means is the job. Here is what the data actually told me.</p>
+    <ul class="clean">
+      <li><strong>It beat the benchmark.</strong> Meta's own comparison put my cost per profile visit 19% below similar ad sets running in the same window. At ₹0.36 a visit on a ₹1,270 budget, the spend worked harder than the peer median. That is the number I am proudest of, because it is not self-reported.</li>
+      <li><strong>The ad reached mostly men, but women converted cheaper.</strong> 72% of reach was male, yet women came in at ₹0.33 per result against ₹0.39 for men. The algorithm spent more finding men, but women were the more efficient audience. Weighting the next budget toward women is a clear lever to lower cost per result.</li>
+      <li><strong>The video lost people early.</strong> Roughly 16,500 three-second plays but only around 1,000 ThruPlays. People started watching and did not finish. The front of the video earned the click, the middle did not hold.</li>
+      <li><strong>What I would test next.</strong> A tighter lean toward the audience that converted, and two or three different video openings to hold viewers past three seconds. That is where the cost per result gets cheaper, not by spending more, but by spending smarter.</li>
+    </ul>
+    <div class="note" style="margin-top:22px"><strong>Honest note.</strong> This was a small self-funded test, not a client budget. I ran it to prove I can set up, launch, read and optimise a live campaign with real money, using creative I made myself. The spend is small. The process is the same one a brand budget runs on.</div>
+    <div class="cta-wrap" style="margin-top:30px">
+      <a class="analysis-btn" href="Meta_Campaign_Critical_Analysis.pdf" target="_blank">
+        Read the full critical analysis (PDF)
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Vikrant Kalukhe · Paid media, with a photographer's eye</div>
+    <div><a href="index.html">Portfolio</a> · <a href="https://www.linkedin.com/in/vikrantsk20">LinkedIn</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
