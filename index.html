@@ -395,7 +395,7 @@ body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button{ cu
   .ld-title{ font-family:"Fraunces",serif; font-weight:500; font-size:clamp(26px,4vw,36px); letter-spacing:-.3px; margin-bottom:10px; }
   .ld-intro{ color:var(--muted); font-size:16px; max-width:560px; line-height:1.55; margin-bottom:34px; }
   .ld-shots{ display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
-  .ld-shot img{ width:100%; border:1px solid var(--line); border-radius:12px; display:block; }
+  .ld-shot img{ width:100%; aspect-ratio:16/11; object-fit:cover; border:1px solid var(--line); border-radius:12px; display:block; }
   .ld-cap{ margin-top:14px; }
   .ld-cap b{ font-family:"Fraunces",serif; font-weight:600; color:var(--cream); font-size:17px; }
   .ld-cap p{ color:var(--muted); font-size:14px; line-height:1.5; margin-top:5px; }
@@ -902,6 +902,17 @@ body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button{ cu
 <script>
   gsap.registerPlugin(ScrollTrigger);
 
+  // Fonts and images loading in after GSAP's first measurement is what causes
+  // pinned sections to lock onto the wrong spot on the page. Force a clean
+  // recalculation once the page has actually settled.
+  const refreshST = () => ScrollTrigger.refresh();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refreshST); }
+  window.addEventListener('load', refreshST);
+  document.querySelectorAll('img').forEach((img) => {
+    if (!img.complete) img.addEventListener('load', refreshST, { once: true });
+  });
+
+
   // Count-up on the Background stats (200+, 10 yrs, 4,000+)
   document.querySelectorAll('.stat .n[data-count]').forEach(el => {
     const target = parseFloat(el.getAttribute('data-count'));
@@ -1051,7 +1062,8 @@ body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button{ cu
           start: 'top top+=84',
           end: '+=130%',
           scrub: 0.7,
-          pin: true
+          pin: true,
+          invalidateOnRefresh: true
         }
       })
       .to(shots[0], { opacity: 0.32, scale: 0.78, ease: 'none' }, 0)
