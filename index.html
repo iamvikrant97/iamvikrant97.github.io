@@ -103,7 +103,7 @@ nav.scrolled{ background:rgba(27,21,18,.92); border-bottom:1px solid var(--line2
 
 /* portrait placeholder */
 .portrait{
-  aspect-ratio:4/5; border-radius:16px; position:relative; overflow:hidden;
+  aspect-ratio:4/5; border-radius:16px; position:relative; overflow:hidden; will-change:transform;
   background:linear-gradient(160deg,var(--bg3),var(--bg2));
   border:1px solid var(--line);
 }
@@ -149,7 +149,7 @@ nav.scrolled{ background:rgba(27,21,18,.92); border-bottom:1px solid var(--line2
 .work-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
 .work-card{ background:var(--bg2); border:1px solid var(--line); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; transition:border-color .25s, transform .25s; }
 .work-card:hover{ border-color:rgba(233,162,59,.4); transform:translateY(-4px); }
-.work-thumb{ aspect-ratio:16/9; position:relative; }
+.work-thumb{ aspect-ratio:16/9; position:relative; overflow:hidden; }
 .work-body{ padding:26px 26px 28px; display:flex; flex-direction:column; flex:1; }
 .work-body .kicker{ font-size:12px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--amber); margin-bottom:10px; }
 .work-body h3{ font-family:"Fraunces",serif; font-weight:600; font-size:25px; margin-bottom:12px; line-height:1.1; }
@@ -163,7 +163,7 @@ nav.scrolled{ background:rgba(27,21,18,.92); border-bottom:1px solid var(--line2
 
 /* lens gallery */
 .lens-grid{ display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:200px; gap:16px; grid-auto-flow:dense; }
-.g{ border-radius:14px; position:relative; overflow:hidden; }
+.g{ border-radius:14px; position:relative; overflow:hidden; will-change:transform; }
 .g.tall{ grid-row:span 2; }
 .g.wide{ grid-column:span 2; }
 .g .ph{ border-radius:14px; }
@@ -188,7 +188,7 @@ nav.scrolled{ background:rgba(27,21,18,.92); border-bottom:1px solid var(--line2
 .cred .r{ color:var(--muted); font-size:13px; white-space:nowrap; }
 .stat-row{ display:flex; gap:14px; margin-top:8px; flex-wrap:wrap; }
 .stat{ background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:16px 18px; flex:1; min-width:120px; }
-.stat .n{ font-family:"Fraunces",serif; font-size:28px; font-weight:600; color:var(--amber); }
+.stat .n{ font-family:"Fraunces",serif; font-size:28px; font-weight:600; color:var(--amber); font-variant-numeric:tabular-nums; }
 .stat .t{ font-size:12px; color:var(--muted); margin-top:2px; }
 
 /* contact */
@@ -205,9 +205,28 @@ footer .wrap{ display:flex; justify-content:space-between; align-items:center; g
 footer p{ font-size:13px; color:var(--muted); }
 footer .made{ font-size:12px; }
 
-/* reveal */
-.reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-.reveal.in{ opacity:1; transform:none; }
+/* reveal — blur + scale + rise, the main "wow" reveal used across the whole site */
+.reveal{
+  opacity:0; transform:translateY(46px) scale(.94); filter:blur(9px);
+  transition:opacity 1s cubic-bezier(.16,.8,.2,1), transform 1.05s cubic-bezier(.16,.8,.2,1), filter 1s ease;
+}
+.reveal.in{ opacity:1; transform:none; filter:blur(0); }
+
+/* reveal variant: tilt-in (used on the What I Do cards) — bigger rotation + travel */
+.reveal.tilt{ transform:translateY(46px) scale(.94) rotate(9deg); }
+.reveal.tilt.in{ transform:none; }
+
+/* lens grid + work grid stagger (extends the existing cascade rules below) */
+.lens-grid .g.reveal:nth-child(2){ transition-delay:.08s; }
+.lens-grid .g.reveal:nth-child(3){ transition-delay:.16s; }
+.lens-grid .g.reveal:nth-child(4){ transition-delay:.24s; }
+.lens-grid .g.reveal:nth-child(5){ transition-delay:.32s; }
+.lens-grid .g.reveal:nth-child(6){ transition-delay:.40s; }
+.work-grid .reveal:nth-child(4){ transition-delay:.27s; }
+
+/* live-data proof shots get a smooth transition so GSAP's scrub reads cleanly */
+.ld-shot{ transition:opacity .3s linear, transform .3s linear; }
+.ld-shots .ld-shot.reveal:nth-child(2){ transition-delay:.12s; }
 
 /* ---------------- MOTION ---------------- */
 /* hero load sequence */
@@ -226,12 +245,65 @@ footer .made{ font-size:12px; }
 @keyframes rise{ from{opacity:0;transform:translateY(22px);} to{opacity:1;transform:none;} }
 @keyframes riseScale{ from{opacity:0;transform:translateY(26px) scale(.98);} to{opacity:1;transform:none;} }
 
+/* hero particle field — the sparkle/nebula look behind the headline */
+.hero-particles{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.hero-particles span{
+  position:absolute; background:#fff; border-radius:50%; opacity:0;
+  animation:twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle{ 0%,100%{ opacity:0; } 50%{ opacity:.85; } }
+
+/* What I Do — pinned horizontal scroll track (desktop only, see JS) */
+.do-pin{ position:relative; overflow:hidden; }
+.do-track{ display:flex; gap:28px; width:max-content; counter-reset:do-index; }
+.do-track .do-card{ width:400px; flex:none; position:relative; }
+.do-track .do-card::before{
+  counter-increment:do-index; content:counter(do-index, decimal-leading-zero);
+  position:absolute; top:20px; right:24px; font-family:"Fraunces",serif;
+  font-size:13px; letter-spacing:.05em; color:var(--amber); opacity:.55;
+}
+@media (max-width:899px){
+  .do-pin{ overflow:visible; }
+  .do-track{ display:flex; flex-direction:column; width:auto !important; transform:none !important; gap:20px; }
+  .do-track .do-card{ width:auto; }
+}
+
+/* work-card corner badge, revealed on hover — bento-tile feel */
+.work-card{ position:relative; }
+.work-card::after{
+  content:"↗"; position:absolute; top:18px; right:18px; z-index:2;
+  width:34px; height:34px; border-radius:50%; background:var(--amber); color:var(--bg);
+  display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700;
+  opacity:0; transform:scale(.6) rotate(-30deg);
+  transition:opacity .35s cubic-bezier(.2,.8,.2,1), transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.work-card:hover::after{ opacity:1; transform:scale(1) rotate(0deg); }
+
+/* custom cursor */
+.cursor-dot{ position:fixed; top:0; left:0; width:7px; height:7px; border-radius:50%; background:var(--amber); pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+.cursor-ring{ position:fixed; top:0; left:0; width:34px; height:34px; border-radius:50%; border:1.4px solid rgba(233,162,59,.65); pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .25s ease,height .25s ease,background .25s ease; }
+.cursor-ring.hover{ width:58px; height:58px; background:rgba(233,162,59,.10); }
+@media (hover:none), (max-width:900px){ .cursor-dot,.cursor-ring{ display:none !important; } }
+body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button{ cursor:none; }
+
+/* kinetic word reveal — used on section headings */
+.kw{ display:inline-block; opacity:0; transform:translateY(22px); filter:blur(5px); transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1), filter .6s ease; }
+.kw.in{ opacity:1; transform:none; filter:blur(0); }
+
+/* 3D tilt targets need perspective-friendly transforms */
+.work-card, .g{ transform-style:preserve-3d; will-change:transform; }
+
+/* scroll progress bar */
+.scroll-bar{ position:fixed; top:0; left:0; width:100%; height:3px; z-index:60; background:transparent; }
+.scroll-bar-fill{ height:100%; width:0%; background:var(--amber); box-shadow:0 0 10px rgba(233,162,59,.55); }
+@media (prefers-reduced-motion:reduce){ .scroll-bar-fill{ transition:none; } }
+
 /* glow drifts with the cursor */
 .hero-glow{ transition:transform .5s cubic-bezier(.2,.7,.2,1); will-change:transform; }
 
 /* staggered cascade inside grids */
-.do-grid .reveal:nth-child(2),.work-grid .reveal:nth-child(2),.reels-grid .reveal:nth-child(2){ transition-delay:.09s; }
-.do-grid .reveal:nth-child(3),.work-grid .reveal:nth-child(3),.reels-grid .reveal:nth-child(3){ transition-delay:.18s; }
+.do-track .reveal:nth-child(2),.work-grid .reveal:nth-child(2),.reels-grid .reveal:nth-child(2){ transition-delay:.09s; }
+.do-track .reveal:nth-child(3),.work-grid .reveal:nth-child(3),.reels-grid .reveal:nth-child(3){ transition-delay:.18s; }
 
 /* gentle zoom when a real photo is hovered */
 .work-thumb img,.g img,.portrait img{ transition:transform .6s cubic-bezier(.2,.7,.2,1); }
@@ -343,6 +415,10 @@ footer .made{ font-size:12px; }
 </head>
 <body>
 
+<div class="scroll-bar"><div class="scroll-bar-fill" id="scrollFill"></div></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
 <nav id="nav">
   <a href="#top" class="brand">Vikrant <b>Kalukhe</b></a>
   <div class="navlinks" id="navlinks">
@@ -359,10 +435,11 @@ footer .made{ font-size:12px; }
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
   <div class="hero-glow"></div>
+  <div class="hero-particles"></div>
   <div class="wrap">
     <div>
       <span class="eyebrow"><span class="dash"></span>Mumbai · Performance marketing &amp; content</span>
-      <h1 class="serif">Performance marketing,<br>with the creative <em>done in-house</em>.</h1>
+      <h1 class="serif">Performance marketing.</h1>
       <p class="dual">I manage campaigns on both Google and Meta, producing all the creative assets myself: photos, videos, and edits.</p>
       <p class="dual">Open to performance marketing and paid media roles. Available now.</p>
       <div class="hero-cta">
@@ -401,41 +478,43 @@ footer .made{ font-size:12px; }
       <h2 class="serif">What I actually do.</h2>
       <p>I handle the media buying and the creative production under one roof. Typically, these are separate roles, but I bridge the gap between the data and the visuals.</p>
     </div>
-    <div class="do-grid">
-      <div class="do-card lead reveal">
+    <div class="do-pin">
+    <div class="do-track">
+      <div class="do-card lead reveal tilt">
         <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
         <span class="tag">Lead</span>
         <h3>Paid media &amp; analytics</h3>
         <p>Google and Meta campaigns, built and run by me. I read the results in GA4, build the reporting in Looker Studio, then adjust based on what the numbers show.</p>
       </div>
-      <div class="do-card reveal">
+      <div class="do-card reveal tilt">
         <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg></div>
         <span class="tag">The edge</span>
         <h3>Content &amp; production</h3>
         <p>I manage the entire process, from shooting to editing with Premiere Pro and After Effects. Most of my work involves travel and food blogs, so I understand how to pace a film. Fast cuts are used where the video needs energy, whereas the slower cinematic shots, B-roll, come in when a moment needs to land.</p>
       </div>
-      <div class="do-card reveal">
+      <div class="do-card reveal tilt">
         <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M3 12h18"/></svg></div>
         <span class="tag">The glue</span>
         <h3>Strategy &amp; social</h3>
         <p>I keep the strategy tying everything together. One clear message across the channels, rather than a collection of disconnected posts.</p>
       </div>
     </div>
+    </div>
   </div>
 </section>
 
   <!-- ===== LIVE CAMPAIGN DATA SECTION ===== -->
-  <section id="live-data">
+  <section id="live-data" class="ld-pin">
     <div class="ld-wrap">
       <span class="ld-eyebrow"><span class="ld-dash"></span>Live campaign &middot; real spend</span>
-      <h2 class="ld-title">The numbers, straight from Ads Manager.</h2>
-      <p class="ld-intro">A self-funded Meta Ads campaign I built and ran end to end. Two quick reads below. The full breakdown is a click away.</p>
+      <h2 class="ld-title reveal">The numbers, straight from Ads Manager.</h2>
+      <p class="ld-intro reveal">A self-funded Meta Ads campaign I built and ran end to end. Two quick reads below. The full breakdown is a click away.</p>
       <div class="ld-shots">
-        <div class="ld-shot">
+        <div class="ld-shot reveal">
           <img src="shot_results.jpg" alt="Ads Manager results: 3,506 profile visits, Rs 1,270 spent, 19% below benchmark">
           <div class="ld-cap"><b>Beat the benchmark.</b><p>3,506 profile visits at &#8377;0.36 each, 19% below comparable ad sets by Meta&rsquo;s own comparison.</p></div>
         </div>
-        <div class="ld-shot">
+        <div class="ld-shot reveal">
           <img src="shot_audience.jpg" alt="Age and gender breakdown with cost per result by segment">
           <div class="ld-cap"><b>Read the audience.</b><p>Women converted cheaper than men, &#8377;0.33 vs &#8377;0.39, a clear lever for the next campaign.</p></div>
         </div>
@@ -445,17 +524,17 @@ footer .made{ font-size:12px; }
   </section>
 
   <!-- ===== LIVE CAMPAIGN DATA SECTION — GOOGLE ADS ===== -->
-  <section id="live-data-google">
+  <section id="live-data-google" class="ld-pin">
     <div class="ld-wrap">
       <span class="ld-eyebrow"><span class="ld-dash"></span>Live campaign &middot; real spend</span>
-      <h2 class="ld-title">The second campaign, straight from Google Ads.</h2>
-      <p class="ld-intro">A self-funded Search campaign I built and ran end to end. Two quick reads below. The full breakdown is a click away.</p>
+      <h2 class="ld-title reveal">The second campaign, straight from Google Ads.</h2>
+      <p class="ld-intro reveal">A self-funded Search campaign I built and ran end to end. Two quick reads below. The full breakdown is a click away.</p>
       <div class="ld-shots">
-        <div class="ld-shot">
+        <div class="ld-shot reveal">
           <img src="google_daily.png" alt="Daily performance chart showing clicks, impressions, CPC and cost from Aug 17 to Aug 23, 2026">
           <div class="ld-cap"><b>Beat expectation.</b><p>14.51% CTR against a typical 3&ndash;5% for search ads in this niche, on &#8377;1,702.50 spent.</p></div>
         </div>
-        <div class="ld-shot">
+        <div class="ld-shot reveal">
           <img src="google_hero.png" alt="Recreation of the search ad using the actual headline and description that ran">
           <div class="ld-cap"><b>Read the ad.</b><p>The exact headline and description that ran, laid out as it appears in a real search result.</p></div>
         </div>
@@ -579,12 +658,12 @@ footer .made{ font-size:12px; }
       <p>Over 200 professional shoots across India since 2012. Real clients. Real deadlines. That experience is the eye I now bring to paid media.</p>
     </div>
     <div class="lens-grid">
-      <div class="g tall"><img src="lens_portrait.jpg" alt="Portrait — Edinburgh" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-      <div class="g wide"><img src="lens_travel.jpg" alt="Travel — mountain ridge" style="width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;"></div>
-      <div class="g"><img src="lens_food.jpg" alt="Food" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-      <div class="g"><img src="lens_architecture.jpg" alt="Architecture — Himalayan monastery" style="width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;"></div>
-      <div class="g"><img src="lens_events.jpg" alt="Events" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-      <div class="g"><img src="lens_cityscape.jpg" alt="Cityscape — London" style="width:100%;height:100%;object-fit:cover;object-position:center 55%;display:block;"></div>
+      <div class="g tall reveal"><img src="lens_portrait.jpg" alt="Portrait — Edinburgh" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="g wide reveal"><img src="lens_travel.jpg" alt="Travel — mountain ridge" style="width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;"></div>
+      <div class="g reveal"><img src="lens_food.jpg" alt="Food" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="g reveal"><img src="lens_architecture.jpg" alt="Architecture — Himalayan monastery" style="width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;"></div>
+      <div class="g reveal"><img src="lens_events.jpg" alt="Events" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="g reveal"><img src="lens_cityscape.jpg" alt="Cityscape — London" style="width:100%;height:100%;object-fit:cover;object-position:center 55%;display:block;"></div>
     </div>
   </div>
 </section>
@@ -652,9 +731,9 @@ footer .made{ font-size:12px; }
         <p>I started in photography and video back in <b>2012</b>, building a content brand across Instagram and YouTube and shooting for clients across India. Somewhere along the way I got more interested in the side that makes content actually perform: the targeting, the budgets, the numbers.</p>
         <p>So I went and studied it properly, an <b>MSc in Digital Marketing</b> in the UK, on top of a marketing diploma back home. Now I'm focused on the paid side, where I get to use both halves of what I know.</p>
         <div class="stat-row">
-          <div class="stat"><div class="n">200+</div><div class="t">Professional shoots</div></div>
-          <div class="stat"><div class="n">10 yrs</div><div class="t">Behind the camera</div></div>
-          <div class="stat"><div class="n">4,000+</div><div class="t">Photography following</div></div>
+          <div class="stat"><div class="n" data-count="200" data-suffix="+">0+</div><div class="t">Professional shoots</div></div>
+          <div class="stat"><div class="n" data-count="10" data-suffix=" yrs">0 yrs</div><div class="t">Behind the camera</div></div>
+          <div class="stat"><div class="n" data-count="4000" data-suffix="+">0+</div><div class="t">Photography following</div></div>
         </div>
       </div>
       <div class="reveal">
@@ -669,7 +748,8 @@ footer .made{ font-size:12px; }
           <div class="cred"><div class="l">Google Ads Search</div><div class="r">Google · 2026</div></div>
           <div class="cred"><div class="l">Meta Blueprint, Digital Marketing path</div><div class="r">Meta · 2026</div></div>
           <div class="cred"><div class="l">Hootsuite Platform Certification</div><div class="r">2024</div></div>
-          <div class="cred"><div class="l">GA4 &amp; HubSpot Content Marketing</div><div class="r">In progress</div></div>
+          <div class="cred"><div class="l">Google Analytics Certification</div><div class="r">Google · 2026</div></div>
+          <div class="cred"><div class="l">HubSpot Digital Advertising</div><div class="r">In progress</div></div>
         </div>
       </div>
     </div>
@@ -705,7 +785,8 @@ footer .made{ font-size:12px; }
       <div class="cred-item"><div class="l">Meta Blueprint · Digital Marketing path <small>Meta · 10 certificates · 2026</small></div><a class="view" href="Meta_Blueprint_Certificates.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
       <div class="cred-item"><div class="l">Hootsuite Platform Certification <small>Hootsuite · 2024</small></div><a class="view" href="Hootsuite_Platform_Certification.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
       <div class="cred-item"><div class="l">Basic Photography Course <small>Indian Photo Academy, Mumbai · 2012</small></div><a class="view" href="Photography_Certificate.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      <div class="cred-item"><div class="l">GA4 &amp; HubSpot Content Marketing <small>Google · HubSpot</small></div><div class="yr">In progress</div></div>
+      <div class="cred-item"><div class="l">Google Analytics Certification <small>Google · Issued Aug 2026</small></div><a class="view" href="Google_Analytics_Certification.pdf" target="_blank">View <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cred-item"><div class="l">HubSpot Digital Advertising <small>HubSpot</small></div><div class="yr">In progress</div></div>
     </div>
   </div>
 </div>
@@ -741,8 +822,23 @@ footer .made{ font-size:12px; }
   const burger = document.getElementById('burger'), links = document.getElementById('navlinks');
   burger.addEventListener('click', () => links.classList.toggle('open'));
   links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+  // Kinetic word reveal — split plain-text section headings into words so
+  // they can cascade in individually, a beat after their block settles.
+  // (Headings with embedded tags, like the contact h2, are left alone.)
+  document.querySelectorAll('.sec-head h2, .ld-title').forEach(h => {
+    const words = h.textContent.trim().split(/\s+/);
+    h.innerHTML = words.map(w => `<span class="kw">${w}</span>`).join(' ');
+  });
+
   const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        const kws = e.target.querySelectorAll('.kw');
+        kws.forEach((w, i) => setTimeout(() => w.classList.add('in'), 260 + i * 45));
+        io.unobserve(e.target);
+      }
+    });
   }, { threshold: .14 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
@@ -797,6 +893,227 @@ footer .made{ font-size:12px; }
     credBtn.addEventListener('click', openM);
     credModal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeM));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeM(); });
+  }
+</script>
+
+<!-- ===== Motion upgrade: GSAP + ScrollTrigger (added, nothing above this was removed) ===== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Count-up on the Background stats (200+, 10 yrs, 4,000+)
+  document.querySelectorAll('.stat .n[data-count]').forEach(el => {
+    const target = parseFloat(el.getAttribute('data-count'));
+    const suffix = el.getAttribute('data-suffix') || '';
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 88%',
+      once: true,
+      onEnter: () => {
+        let obj = { val: 0 };
+        gsap.to(obj, {
+          val: target,
+          duration: 1.3,
+          ease: 'power1.out',
+          onUpdate: () => { el.textContent = Math.round(obj.val).toLocaleString('en-IN') + suffix; }
+        });
+      }
+    });
+  });
+
+  const canAnimate = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  const isDesktop = matchMedia('(min-width: 900px)').matches;
+
+  // Scroll progress bar
+  const scrollFill = document.getElementById('scrollFill');
+  if (scrollFill) {
+    const updateProgress = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      scrollFill.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+    };
+    addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  // Custom cursor — a tight dot plus a trailing ring that expands over hoverable elements
+  const cDot = document.getElementById('cursorDot');
+  const cRing = document.getElementById('cursorRing');
+  if (cDot && cRing && isDesktop && canAnimate) {
+    document.body.classList.add('custom-cursor-on');
+    let ringX = innerWidth / 2, ringY = innerHeight / 2;
+    addEventListener('mousemove', (e) => {
+      cDot.style.left = e.clientX + 'px';
+      cDot.style.top = e.clientY + 'px';
+      gsap.to(cRing, { left: e.clientX, top: e.clientY, duration: 0.35, ease: 'power2.out' });
+    });
+    document.querySelectorAll('a, button, .work-card, .g, .reel, .do-card').forEach((el) => {
+      el.addEventListener('mouseenter', () => cRing.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cRing.classList.remove('hover'));
+    });
+  }
+
+  // 3D tilt on Work cards and Lens grid tiles — follows the cursor, settles back on exit
+  if (isDesktop && canAnimate) {
+    document.querySelectorAll('.work-card, .g').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(card, { rotateY: px * 10, rotateX: -py * 10, y: -6, duration: 0.4, ease: 'power2.out', transformPerspective: 700 });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { rotateY: 0, rotateX: 0, y: 0, duration: 0.6, ease: 'power3.out' });
+      });
+    });
+  }
+
+  // Text scramble on nav hover
+  if (canAnimate) {
+    const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function scrambleText(el) {
+      if (el.dataset.scrambling) return;
+      const original = el.dataset.original || el.textContent;
+      el.dataset.original = original;
+      el.dataset.scrambling = '1';
+      let progress = 0;
+      clearInterval(el._scrambleTimer);
+      el._scrambleTimer = setInterval(() => {
+        el.textContent = original.split('').map((ch, i) => {
+          if (ch === ' ') return ' ';
+          if (i < progress) return original[i];
+          return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+        }).join('');
+        progress += 0.6;
+        if (progress >= original.length) {
+          clearInterval(el._scrambleTimer);
+          el.textContent = original;
+          el.dataset.scrambling = '';
+        }
+      }, 35);
+    }
+    document.querySelectorAll('.navlinks a:not(.cta)').forEach((a) => {
+      a.addEventListener('mouseenter', () => scrambleText(a));
+    });
+  }
+
+  // Hero particle field — small twinkling dots scattered behind the headline
+  const pField = document.querySelector('.hero-particles');
+  if (pField && canAnimate) {
+    for (let i = 0; i < 70; i++) {
+      const s = document.createElement('span');
+      const size = (Math.random() * 2 + 1).toFixed(1);
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = Math.random() * 100 + '%';
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
+      s.style.animationDuration = (3 + Math.random() * 3).toFixed(2) + 's';
+      pField.appendChild(s);
+    }
+  }
+
+  // What I Do — pinned horizontal scroll. The section locks in place and the
+  // three cards slide across as the visitor scrolls down, like flipping through panels.
+  if (isDesktop && canAnimate) {
+    const doPin = document.querySelector('.do-pin');
+    const doTrack = document.querySelector('.do-track');
+    if (doPin && doTrack) {
+      const getScrollAmount = () => doTrack.scrollWidth - doPin.offsetWidth;
+      gsap.to(doTrack, {
+        x: () => -getScrollAmount(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: doPin,
+          start: 'top top+=84',
+          end: () => '+=' + Math.max(getScrollAmount(), 200),
+          scrub: 0.8,
+          pin: true,
+          invalidateOnRefresh: true
+        }
+      });
+    }
+  }
+
+  // Pinned scroll-scrub on the Meta + Google live-campaign proof sections.
+  // Bigger scale swing + longer scrub distance so it reads as a real zoom, not a blend.
+  if (isDesktop && canAnimate) {
+    document.querySelectorAll('.ld-pin').forEach(section => {
+      const shots = section.querySelectorAll('.ld-shot');
+      if (shots.length < 2) return;
+
+      gsap.set(shots[1], { opacity: 0.32, scale: 0.78 });
+
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top+=84',
+          end: '+=130%',
+          scrub: 0.7,
+          pin: true
+        }
+      })
+      .to(shots[0], { opacity: 0.32, scale: 0.78, ease: 'none' }, 0)
+      .to(shots[1], { opacity: 1, scale: 1.06, ease: 'none' }, 0)
+      .to(shots[1], { scale: 1, ease: 'none' }, 0.85);
+    });
+  }
+
+  // Hero cinematic exit — as you scroll past it, it scales down, drifts up, and fades.
+  // The glow blooms outward and disappears at the same time.
+  if (canAnimate) {
+    const heroContent = document.querySelector('.hero .wrap');
+    const heroGlow = document.querySelector('.hero-glow');
+    if (heroContent) {
+      gsap.to(heroContent, {
+        scale: 0.9,
+        y: -50,
+        opacity: 0.25,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+    }
+    if (heroGlow) {
+      gsap.to(heroGlow, {
+        scale: 1.5,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+    }
+  }
+
+  // Continuous scroll-tied zoom on every photo on the site — starts zoomed in,
+  // settles to normal size exactly as fast as the visitor scrolls. This is the
+  // main "Framer-feeling" effect: it's scrubbed, not a one-time transition.
+  if (canAnimate) {
+    gsap.utils.toArray('.work-thumb img, .g img, .portrait img').forEach((img) => {
+      gsap.fromTo(img,
+        { scale: 1.28 },
+        {
+          scale: 1,
+          ease: 'none',
+          scrollTrigger: { trigger: img, start: 'top bottom', end: 'top 25%', scrub: true }
+        }
+      );
+    });
+  }
+
+  // Magnetic hover on the primary CTA and the contact links — pulls toward the
+  // cursor, snaps back with a little bounce on the way out.
+  if (isDesktop && canAnimate) {
+    document.querySelectorAll('.btn-primary, .soc').forEach((btn) => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        gsap.to(btn, { x: x * 0.28, y: y * 0.45, duration: 0.4, ease: 'power2.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+      });
+    });
   }
 </script>
 </body>
