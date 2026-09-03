@@ -146,7 +146,7 @@ nav.scrolled{ background:rgba(27,21,18,.92); border-bottom:1px solid var(--line2
 .do-card p{ color:var(--muted); font-size:15px; line-height:1.6; }
 
 /* work */
-.work-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.work-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; perspective:1000px; }
 .work-card{ background:var(--bg2); border:1px solid var(--line); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; transition:border-color .25s, transform .25s; }
 .work-card:hover{ border-color:rgba(233,162,59,.4); transform:translateY(-4px); }
 .work-thumb{ aspect-ratio:16/9; position:relative; overflow:hidden; }
@@ -162,7 +162,7 @@ nav.scrolled{ background:rgba(27,21,18,.92); border-bottom:1px solid var(--line2
 .soon{ font-size:13px; color:var(--muted); font-style:italic; }
 
 /* lens gallery */
-.lens-grid{ display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:200px; gap:16px; grid-auto-flow:dense; }
+.lens-grid{ display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:200px; gap:16px; grid-auto-flow:dense; perspective:1000px; }
 .g{ border-radius:14px; position:relative; overflow:hidden; will-change:transform; }
 .g.tall{ grid-row:span 2; }
 .g.wide{ grid-column:span 2; }
@@ -207,7 +207,7 @@ footer .made{ font-size:12px; }
 
 /* reveal — blur + scale + rise, the main "wow" reveal used across the whole site */
 .reveal{
-  opacity:0; transform:translateY(46px) scale(.94); filter:blur(9px);
+  opacity:0; transform:translateY(46px) scale(.94); filter:blur(3px);
   transition:opacity 1s cubic-bezier(.16,.8,.2,1), transform 1.05s cubic-bezier(.16,.8,.2,1), filter 1s ease;
 }
 .reveal.in{ opacity:1; transform:none; filter:blur(0); }
@@ -287,7 +287,7 @@ footer .made{ font-size:12px; }
 body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button{ cursor:none; }
 
 /* kinetic word reveal — used on section headings */
-.kw{ display:inline-block; opacity:0; transform:translateY(22px); filter:blur(5px); transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1), filter .6s ease; }
+.kw{ display:inline-block; opacity:0; transform:translateY(22px); filter:blur(2px); transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1), filter .6s ease; }
 .kw.in{ opacity:1; transform:none; filter:blur(0); }
 
 /* 3D tilt targets need perspective-friendly transforms */
