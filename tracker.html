@@ -73,6 +73,8 @@
   <div class="header-right">
     <a class="btn-nav" href="framework.html">⬅ Back to Framework</a>
     <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn-export" onclick="document.getElementById('csv-import').click()">⬆ Import CSV</button>
+    <input type="file" id="csv-import" accept=".csv" style="display:none;" onchange="importCSV(this)">
     <button class="btn-export" onclick="clearAll()">🗑 Clear All</button>
   </div>
 </div>
@@ -229,6 +231,52 @@ function exportCSV() {
 }
 
 function clearAll() { if (!confirm('Delete ALL applications?')) return; apps=[]; save(); render(); updateStats(); }
+
+function importCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split('\n').filter(l => l.trim());
+    if (lines.length < 2) { alert('CSV appears empty.'); return; }
+    const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim().toLowerCase());
+    const roleIdx = headers.findIndex(h => h.includes('role'));
+    const companyIdx = headers.findIndex(h => h.includes('company'));
+    const locationIdx = headers.findIndex(h => h.includes('location'));
+    const dateIdx = headers.findIndex(h => h.includes('date'));
+    const platformIdx = headers.findIndex(h => h.includes('platform'));
+    const statusIdx = headers.findIndex(h => h.includes('status'));
+    const notesIdx = headers.findIndex(h => h.includes('notes'));
+    const linkIdx = headers.findIndex(h => h.includes('link'));
+    const validStatuses = ['applied','waiting','screening','interview','offer','rejected','withdrawn'];
+    let imported = 0, skipped = 0;
+    lines.slice(1).forEach(line => {
+      const cols = line.match(/(".*?"|[^,]+|(?<=,)(?=,)|(?<=,)$|^(?=,))/g) || line.split(',');
+      const clean = cols.map(c => (c||'').replace(/^"|"$/g,'').trim());
+      const role = roleIdx >= 0 ? clean[roleIdx] : '';
+      const company = companyIdx >= 0 ? clean[companyIdx] : '';
+      if (!role || !company) { skipped++; return; }
+      let status = statusIdx >= 0 ? clean[statusIdx].toLowerCase() : 'applied';
+      if (!validStatuses.includes(status)) status = 'applied';
+      apps.push({
+        id: Date.now() + Math.random(),
+        role,
+        company,
+        location: locationIdx >= 0 ? clean[locationIdx] : '',
+        date: dateIdx >= 0 ? clean[dateIdx] : '',
+        platform: platformIdx >= 0 ? clean[platformIdx] : 'Other',
+        status,
+        notes: notesIdx >= 0 ? clean[notesIdx] : '',
+        link: linkIdx >= 0 ? clean[linkIdx] : ''
+      });
+      imported++;
+    });
+    save(); render(); updateStats();
+    alert(`Imported ${imported} applications.${skipped > 0 ? ` Skipped ${skipped} rows (missing role or company).` : ''}`);
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
 
 apps = load();
 document.getElementById('f-date').valueAsDate = new Date();
